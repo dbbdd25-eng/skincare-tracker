@@ -1,7 +1,7 @@
 {
-  "name": "30天韩系养成打卡",
-  "short_name": "韩系打卡",
-  "description": "防晒、早睡、刷酸——30 天养成计划每日打卡",
+  "name": "韩男养成中心",
+  "short_name": "韩男养成",
+  "description": "打卡、护肤百科、皮肤日记、成就徽章、励志金句",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

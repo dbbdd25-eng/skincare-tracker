@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>护肤百科 · 韩男养成中心</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82c4">
+</head>
+<body>
+  <main class="container">
+
+    <div class="card">
+      <div class="card-head"><h2>🔍 护肤百科库</h2><span class="muted">搜成分 / 查产品</span></div>
+      <input class="search-box" id="searchInput" placeholder="搜索：烟酰胺 / 水杨酸 / 防晒 / 避坑…">
+      <div id="wikiResult"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>🧴 学生党产品红黑榜</h2></div>
+      <div id="productList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>⚠️ 避坑清单</h2></div>
+      <ul style="padding-left:18px;font-size:13.5px;color:#4a5568;line-height:2;">
+        <li>欧莱雅男士 / 妮维雅男士洗面奶 —— 皂基，越洗越油越干</li>
+        <li>含酒精 + 薄荷的"男士专用"爽肤水 —— 刺激屏障</li>
+        <li>三无美白面膜 —— 激素脸风险</li>
+        <li>9.9 包邮的"神器" —— 成分表都不敢看</li>
+        <li>洗面奶追求"洗得吱吱响" —— 紧绷感 = 清洁过度</li>
+      </ul>
+    </div>
+
+  </main>
+
+  <script src="common.js"></script>
+  <script>
+    injectNav("wiki");
+
+    /* 成分数据库 */
+    const WIKI = [
+      { key: "烟酰胺", tags: ["美白","淡印","提亮"], desc: "平价美白王者，控油+淡化痘印，从低浓度建立耐受", good: true },
+      { key: "水杨酸", tags: ["去黑头","刷酸"], desc: "亲脂性，能钻进毛孔溶解油脂，黑头闭口选它", good: true },
+      { key: "果酸", tags: ["去角质","提亮"], desc: "亲水性，主打表层代谢，改善粗糙暗沉", good: true },
+      { key: "维C", tags: ["抗氧化","提亮"], desc: "抗氧化天花板，白天用加强光防护，开封易氧化", good: true },
+      { key: "烟酰胺", tags: ["美白"], desc: "平价美白首选，搭配防晒效果翻倍", good: true },
+      { key: "神经酰胺", tags: ["修护","屏障"], desc: "皮肤屏障的「砖块」，刷酸后、敏感期必备", good: true },
+      { key: "氨基酸表活", tags: ["洁面","温和"], desc: "认准「XX酰X氨酸XX」，最温和的洁面成分", good: true },
+      { key: "酒精", tags: ["刺激"], desc: "高浓度酒精破坏屏障，敏感肌避开（变性乙醇）", good: false },
+      { key: "皂基", tags: ["洁面","避坑"], desc: "月桂酸/肉豆蔻酸+氢氧化钾，清洁力过强毁屏障", good: false },
+      { key: "氧化锌", tags: ["防晒","物理"], desc: "物理防晒剂，温和不刺激，但可能假白", good: true },
+      { key: "二氧化钛", tags: ["防晒","物理"], desc: "物理防晒剂，常见于敏感肌防晒", good: true },
+    ];
+    /* 产品红黑榜 */
+    const PRODUCTS = [
+      { name: "旁氏米萃洁面", tag: "好", good: true, desc: "约¥20，氨基酸洁面，学生党首选" },
+      { name: "至本舒颜修护洁面乳", tag: "好", good: true, desc: "约¥48，敏感肌闭眼入" },
+      { name: "The Ordinary 烟酰胺10%", tag: "好", good: true, desc: "约¥60，平价美白之王" },
+      { name: "谷雨光感美白精华", tag: "好", good: true, desc: "约¥170，国货提亮口碑款" },
+      { name: "蜜丝婷小黄帽防晒", tag: "好", good: true, desc: "约¥55，SPF50+ 不闷痘" },
+      { name: "碧柔水感防晒", tag: "好", good: true, desc: "约¥60，轻薄如水" },
+      { name: "Stridex 水杨酸棉片", tag: "好", good: true, desc: "约¥45，新手从红管0.5%开始" },
+      { name: "大宝 SOD 蜜", tag: "好", good: true, desc: "约¥15，基础保湿够用" },
+      { name: "欧莱雅男士洗面奶", tag: "雷", good: false, desc: "皂基，毁屏障元凶" },
+      { name: "妮维雅男士洗面奶", tag: "雷", good: false, desc: "同皂基，越洗越油" },
+      { name: "火山泥去黑头撕拉", tag: "雷", good: false, desc: "撕拉伤毛孔，黑头越撕越多" },
+    ];
+
+    function renderWiki(filter) {
+      const kw = (filter || "").trim();
+      const list = kw ? WIKI.filter((w) => w.key.includes(kw) || w.tags.some((t) => t.includes(kw))) : WIKI;
+      $("wikiResult").innerHTML = list.length
+        ? list.map((w) => `
+          <div class="wiki-item">
+            <div class="w-name">${w.key} <span class="tag ${w.good ? "tag-good" : "tag-bad"}">${w.good ? "✓ 友好" : "✗ 避坑"}</span></div>
+            <div class="w-desc">${w.desc}</div>
+            <div class="muted" style="margin-top:2px;">${w.tags.map((t) => "#" + t).join(" ")}</div>
+          </div>`).join("")
+        : `<p class="muted">没找到「${kw}」，换个词试试</p>`;
+    }
+    function renderProducts() {
+      $("productList").innerHTML = PRODUCTS.map((p) => `
+        <div class="wiki-item">
+          <div class="w-name">${p.name} <span class="tag ${p.good ? "tag-good" : "tag-bad"}">${p.tag}</span></div>
+          <div class="w-desc">${p.desc}</div>
+        </div>`).join("");
+    }
+
+    const $ = (id) => document.getElementById(id);
+    document.getElementById("searchInput").addEventListener("input", (e) => renderWiki(e.target.value));
+    renderWiki("");
+    renderProducts();
+  </script>
+</body>
+</html>

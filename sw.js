@@ -1,7 +1,18 @@
-/* Service Worker · 精简单文件版
-   装好 App 后断网 / 不开 VPN 也能打卡（页面从缓存加载，数据在 localStorage） */
-const CACHE_NAME = "skincare-pwa-v1";
-const ASSETS = ["./", "./index.html", "./manifest.json"];
+/* Service Worker · 韩男养成中心
+   缓存所有页面，装一次之后断网/不开 VPN 也能用 */
+const CACHE_NAME = "skincare-site-v1";
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./checkin.html",
+  "./wiki.html",
+  "./diary.html",
+  "./achievements.html",
+  "./quotes.html",
+  "./style.css",
+  "./common.js",
+  "./manifest.json",
+];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));

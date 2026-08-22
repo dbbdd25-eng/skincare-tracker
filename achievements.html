@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>成就徽章 · 韩男养成中心</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82c4">
+</head>
+<body>
+  <main class="container">
+
+    <div class="card">
+      <div class="card-head"><h2>🏆 我的等级</h2></div>
+      <div id="levelPanel"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>🎖️ 成就徽章墙</h2><span class="muted" id="unlockCount"></span></div>
+      <div id="emptyHint" style="display:none;background:#f0f4ff;border:1px solid #d7e3f7;border-radius:12px;padding:14px 16px;font-size:13px;color:#4a5a78;margin-bottom:12px;">
+        🏁 还没有任何记录——去「打卡」页勾选今天的任务，第一个徽章「🌱 第一步」就会点亮。
+      </div>
+      <div class="badge-grid" id="badgeGrid"></div>
+    </div>
+
+  </main>
+
+  <script src="common.js"></script>
+  <script>
+    injectNav("achievements");
+    const $ = (id) => document.getElementById(id);
+
+    function render() {
+      const h = enrichHistory(calcHistory());
+      const lv = levelOf(h.xp);
+      const xpInLevel = h.xp % XP_PER_LEVEL;
+
+      $("#levelPanel").innerHTML = `
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:70px;height:70px;border-radius:20px;background:linear-gradient(135deg,var(--primary),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;">Lv ${lv}</div>
+          <div style="flex:1;">
+            <div style="font-size:17px;font-weight:800;">${LEVEL_TITLES[lv - 1]}</div>
+            <div class="xp-track" style="height:10px;background:#e2e9f5;border-radius:999px;overflow:hidden;margin:8px 0 4px;">
+              <div style="height:100%;width:${lv >= 10 ? 100 : (xpInLevel / XP_PER_LEVEL) * 100}%;background:linear-gradient(90deg,var(--amber),#f5c76e);border-radius:999px;"></div>
+            </div>
+            <div class="muted">${lv >= 10 ? h.xp + " XP · 已满级 🏆" : h.xp + " XP · 再得 " + (XP_PER_LEVEL - xpInLevel) + " XP 升级"}</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;text-align:center;">
+          <div><div style="font-size:22px;font-weight:800;color:var(--primary);">${h.perfect}</div><div class="muted">完美日</div></div>
+          <div><div style="font-size:22px;font-weight:800;color:var(--primary);">${calcStreak()}</div><div class="muted">连续打卡</div></div>
+          <div><div style="font-size:22px;font-weight:800;color:var(--primary);">${h.checked}</div><div class="muted">总勾选</div></div>
+        </div>`;
+
+      const unlocked = ACHIEVEMENTS.filter((a) => a.check(h));
+      $("#unlockCount").textContent = `${unlocked.length} / ${ACHIEVEMENTS.length} 解锁`;
+      // 无记录时显示引导提示
+      $("#emptyHint").style.display = h.checked === 0 ? "block" : "none";
+      $("#badgeGrid").innerHTML = ACHIEVEMENTS.map((a) => `
+        <div class="badge ${a.check(h) ? "unlocked" : ""}">
+          <span class="b-icon">${a.icon}</span>
+          <div class="b-name">${a.name}</div>
+          <div class="b-desc">${a.desc}</div>
+        </div>`).join("");
+    }
+
+    render();
+  </script>
+</body>
+</html>

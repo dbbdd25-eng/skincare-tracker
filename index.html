@@ -3,853 +3,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>30 天韩系养成 · 每日打卡</title>
-  <style>
-/* ============================================================
-   30 天韩系养成 · 打卡网站样式
-   配色：清爽蓝紫（延续护肤主题），移动优先布局
-   ============================================================ */
-
-:root {
-  --bg: #f4f6fb;
-  --card: #ffffff;
-  --primary: #3b82c4;
-  --primary-deep: #2f6ba3;
-  --purple: #5b6ee8;
-  --green: #34a877;
-  --green-light: #e6f7f0;
-  --amber: #f0a13a;
-  --amber-light: #fdf3e3;
-  --red: #e05252;
-  --text: #2d3748;
-  --text-light: #8a94a6;
-  --border: #e4e9f2;
-  --radius: 16px;
-  --shadow: 0 2px 10px rgba(45, 74, 120, 0.06);
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
-    "Helvetica Neue", "Microsoft YaHei", sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  padding-bottom: 60px;
-}
-
-/* ---------- 顶部 ---------- */
-.header {
-  background: linear-gradient(135deg, var(--primary), var(--purple));
-  color: #fff;
-  padding: 26px 18px 22px;
-  border-radius: 0 0 24px 24px;
-}
-.header-inner {
-  max-width: 640px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-.header h1 { font-size: 21px; letter-spacing: 0.5px; }
-.today-line { font-size: 13px; opacity: 0.9; margin-top: 4px; }
-.gear-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: #fff;
-  font-size: 17px;
-  width: 38px; height: 38px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 0.15s;
-}
-.gear-btn:active { transform: rotate(45deg); }
-
-/* ---------- 布局 ---------- */
-.container {
-  max-width: 640px;
-  margin: 16px auto 0;
-  padding: 0 14px;
-}
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px 16px;
-  margin-bottom: 14px;
-  box-shadow: var(--shadow);
-}
-.card-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-.card-head h2 { font-size: 16px; }
-
-/* ---------- 30 天进度 ---------- */
-.day-badge {
-  background: var(--primary);
-  color: #fff;
-  font-size: 12.5px;
-  font-weight: 700;
-  padding: 3px 12px;
-  border-radius: 999px;
-}
-.progress-track {
-  height: 12px;
-  background: var(--bg);
-  border-radius: 999px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--primary), var(--purple));
-  transition: width 0.6s ease;
-}
-.progress-text {
-  font-size: 12.5px;
-  color: var(--text-light);
-  margin-top: 8px;
-}
-.medals {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-.medal {
-  flex: 1;
-  text-align: center;
-  font-size: 12px;
-  color: var(--text-light);
-  background: var(--bg);
-  border-radius: 12px;
-  padding: 10px 4px 8px;
-  border: 1px solid var(--border);
-  filter: grayscale(1);
-  opacity: 0.55;
-  transition: all 0.4s;
-}
-.medal.unlocked {
-  filter: none;
-  opacity: 1;
-  background: var(--amber-light);
-  border-color: var(--amber);
-  color: #a06a12;
-  font-weight: 700;
-}
-.medal-icon { display: block; font-size: 22px; margin-bottom: 2px; }
-
-/* ---------- 任务列表 ---------- */
-.done-count {
-  font-size: 13px;
-  color: var(--primary);
-  font-weight: 700;
-}
-.task-list { list-style: none; }
-.task-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 4px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  user-select: none;
-  transition: background 0.2s;
-  border-radius: 10px;
-}
-.task-item:last-child { border-bottom: none; }
-.task-item:active { background: var(--bg); }
-
-/* 自定义复选框 */
-.task-check {
-  width: 24px; height: 24px;
-  border: 2px solid #c3cddd;
-  border-radius: 8px;
-  flex-shrink: 0;
-  position: relative;
-  transition: all 0.2s;
-}
-.task-item.checked .task-check {
-  background: var(--green);
-  border-color: var(--green);
-}
-.task-item.checked .task-check::after {
-  content: "✓";
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.task-icon { font-size: 19px; flex-shrink: 0; }
-.task-body { flex: 1; min-width: 0; }
-.task-name { font-size: 14.5px; font-weight: 600; }
-.task-item.checked .task-name {
-  text-decoration: line-through;
-  color: var(--text-light);
-}
-.task-desc { font-size: 12px; color: var(--text-light); }
-.task-time {
-  font-size: 11px;
-  color: var(--purple);
-  background: #eef0fd;
-  padding: 2px 8px;
-  border-radius: 999px;
-  flex-shrink: 0;
-}
-.acid-tip {
-  font-size: 12px;
-  color: var(--text-light);
-  margin-top: 10px;
-  text-align: center;
-}
-
-/* ---------- 皮肤状态评分 ---------- */
-.skin-hint { font-size: 12px; color: var(--text-light); }
-.stars {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  padding: 8px 0 4px;
-}
-.star {
-  font-size: 34px;
-  cursor: pointer;
-  filter: grayscale(1);
-  opacity: 0.45;
-  transition: transform 0.15s, filter 0.2s, opacity 0.2s;
-}
-.star.on {
-  filter: none;
-  opacity: 1;
-  transform: scale(1.08);
-}
-.star:active { transform: scale(1.25); }
-
-/* ---------- 统计 ---------- */
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 18px;
-}
-.stat {
-  background: var(--bg);
-  border-radius: 12px;
-  padding: 12px 6px;
-  text-align: center;
-}
-.stat-num {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--primary);
-}
-.stat-label { font-size: 11.5px; color: var(--text-light); }
-.week-title {
-  font-size: 13px;
-  color: var(--text-light);
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-.week-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-}
-.week-cell {
-  aspect-ratio: 1;
-  border-radius: 10px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  color: var(--text-light);
-}
-.week-cell .pct { font-size: 10.5px; font-weight: 700; margin-top: 1px; }
-/* 完成度分档着色 */
-.week-cell.lv-perfect { background: var(--green); border-color: var(--green); color: #fff; }
-.week-cell.lv-good    { background: var(--green-light); border-color: #b8e5d2; color: #1e7a52; }
-.week-cell.lv-partial { background: var(--amber-light); border-color: #f3ddba; color: #a06a12; }
-.week-cell.today     { outline: 2px solid var(--primary); outline-offset: 1px; }
-
-.footer-note {
-  text-align: center;
-  font-size: 12px;
-  color: var(--text-light);
-  padding: 4px 0 10px;
-}
-
-/* ---------- Toast ---------- */
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: 34px;
-  transform: translateX(-50%) translateY(20px);
-  background: rgba(45, 55, 72, 0.92);
-  color: #fff;
-  font-size: 14px;
-  padding: 11px 22px;
-  border-radius: 999px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  z-index: 99;
-}
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* ---------- 设置弹窗 ---------- */
-.modal-mask {
-  position: fixed;
-  inset: 0;
-  background: rgba(20, 28, 44, 0.45);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 100;
-}
-.modal-mask.open { display: flex; }
-.modal {
-  background: #fff;
-  border-radius: 18px;
-  padding: 24px 20px;
-  width: 100%;
-  max-width: 380px;
-  position: relative;
-  animation: popIn 0.25s ease;
-}
-@keyframes popIn {
-  from { transform: scale(0.92); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
-}
-.modal h2 { font-size: 17px; margin-bottom: 16px; }
-.field span { display: block; font-size: 13px; margin-bottom: 6px; }
-.field input[type="date"] {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-size: 14px;
-  color: var(--text);
-  outline: none;
-}
-.field input[type="date"]:focus { border-color: var(--primary); }
-.field-tip { font-size: 12px; color: var(--text-light); margin-top: 6px; }
-.modal-btns {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-.btn {
-  flex: 1;
-  padding: 11px 0;
-  border-radius: 11px;
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.btn.primary { background: var(--primary); color: #fff; }
-.btn.danger {
-  background: #fff;
-  color: var(--red);
-  border: 1.5px solid #f3c6c6;
-}
-.modal-close {
-  position: absolute;
-  top: 14px; right: 14px;
-  border: none;
-  background: var(--bg);
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  color: var(--text-light);
-  cursor: pointer;
-  font-size: 13px;
-}
-
-</style>
-
-  <!-- ===== PWA：让网页变成可安装的"软件" ===== -->
-  <link rel="icon" href="data:image/png;base64,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">
+  <title>韩男养成中心 · 首页</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#3b82c4">
-  <!-- iOS 添加到主屏幕支持 -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="韩系打卡">
-  <link rel="apple-touch-icon" href="data:image/png;base64,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">
 </head>
 <body>
-
-  <!-- ===== 顶部：标题 + 设置入口 ===== -->
-  <header class="header">
-    <div class="header-inner">
-      <div>
-        <h1>💪 韩系养成计划</h1>
-        <p class="today-line" id="todayLine">—</p>
-      </div>
-      <button class="gear-btn" id="settingsBtn" title="设置">⚙️</button>
-    </div>
-  </header>
-
   <main class="container">
 
-    <!-- ===== 卡片 1：30 天进度 ===== -->
-    <section class="card">
-      <div class="card-head">
-        <h2>🗓️ 30 天进度</h2>
-        <span class="day-badge" id="dayBadge">Day 1</span>
+    <!-- 轮播 Banner -->
+    <div class="banner" id="banner">
+      <div class="banner-slide on">
+        <h2>💪 30 天韩系养成计划</h2>
+        <p>防晒 + 保湿 + 早睡，把好状态变成可复制的习惯</p>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progressFill"></div>
+      <div class="banner-slide">
+        <h2>📅 今天进度</h2>
+        <p id="bannerProgress">加载中…</p>
       </div>
-      <div class="progress-text" id="progressText">刚刚开始，别急</div>
-      <!-- 里程碑勋章：7 / 14 / 30 天 -->
-      <div class="medals">
-        <div class="medal" id="medal7"><span class="medal-icon">🥉</span>7 天</div>
-        <div class="medal" id="medal14"><span class="medal-icon">🥈</span>14 天</div>
-        <div class="medal" id="medal30"><span class="medal-icon">🥇</span>30 天</div>
+      <div class="banner-slide">
+        <h2>💡 每日冷知识</h2>
+        <p id="bannerTip">加载中…</p>
       </div>
-    </section>
+      <div class="banner-dots" id="bannerDots"></div>
+    </div>
 
-    <!-- ===== 卡片 2：今日任务 ===== -->
-    <section class="card">
-      <div class="card-head">
-        <h2>✅ 今日任务</h2>
-        <span class="done-count" id="doneCount">0 / 6</span>
+    <!-- 功能入口 -->
+    <div class="card">
+      <div class="card-head"><h2>🎯 功能入口</h2></div>
+      <div class="grid-entries">
+        <a class="entry" href="checkin.html"><span class="icon">✅</span><span class="label">每日打卡</span></a>
+        <a class="entry" href="wiki.html"><span class="icon">📚</span><span class="label">护肤百科</span></a>
+        <a class="entry" href="diary.html"><span class="icon">📝</span><span class="label">皮肤日记</span></a>
+        <a class="entry" href="achievements.html"><span class="icon">🏆</span><span class="label">成就徽章</span></a>
+        <a class="entry" href="quotes.html"><span class="icon">✨</span><span class="label">励志金句</span></a>
       </div>
-      <ul class="task-list" id="taskList"><!-- 由 JS 渲染 --></ul>
-      <p class="acid-tip" id="acidTip"></p>
-    </section>
+    </div>
 
-    <!-- ===== 卡片 3：今日皮肤状态 ===== -->
-    <section class="card">
-      <div class="card-head">
-        <h2>⭐ 今日皮肤状态</h2>
-        <span class="skin-hint" id="skinHint">睡前评一个</span>
-      </div>
-      <div class="stars" id="stars"><!-- 由 JS 渲染 --></div>
-    </section>
+    <!-- 今日待办速览 -->
+    <div class="card">
+      <div class="card-head"><h2>✅ 今日待办</h2><a href="checkin.html" class="muted">去打卡 →</a></div>
+      <ul id="todoList" style="list-style:none;"></ul>
+    </div>
 
-    <!-- ===== 卡片 4：数据统计 ===== -->
-    <section class="card">
-      <div class="card-head">
-        <h2>📊 我的战绩</h2>
-      </div>
-      <div class="stat-grid">
-        <div class="stat">
-          <div class="stat-num" id="streakNum">0</div>
-          <div class="stat-label">连续打卡(天)</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num" id="perfectNum">0</div>
-          <div class="stat-label">完美日</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num" id="rateNum">—</div>
-          <div class="stat-label">平均完成率</div>
-        </div>
-      </div>
-      <h3 class="week-title">最近 7 天</h3>
-      <div class="week-grid" id="weekGrid"><!-- 由 JS 渲染 --></div>
-    </section>
+    <!-- 我的等级速览 -->
+    <div class="card">
+      <div class="card-head"><h2>🏆 我的等级</h2><a href="achievements.html" class="muted">看成就 →</a></div>
+      <div id="levelSummary"></div>
+    </div>
 
-    <p class="footer-note">数据保存在这台设备的浏览器里 · 换设备不会同步</p>
   </main>
 
-  <!-- ===== Toast 提示（打卡成功时弹出） ===== -->
-  <div class="toast" id="toast"></div>
-
-  <!-- ===== 设置弹窗 ===== -->
-  <div class="modal-mask" id="modalMask">
-    <div class="modal">
-      <h2>⚙️ 设置</h2>
-      <label class="field">
-        <span>计划开始日期</span>
-        <input type="date" id="startDateInput">
-      </label>
-      <p class="field-tip">从这天开始算 30 天倒计时，Day 1 = 开始当天</p>
-      <div class="modal-btns">
-        <button class="btn danger" id="clearBtn">清空数据</button>
-        <button class="btn primary" id="saveBtn">保存</button>
-      </div>
-      <button class="modal-close" id="closeBtn">✕</button>
-    </div>
-  </div>
-
+  <script src="common.js"></script>
   <script>
-/* ============================================================
-   30 天韩系养成 · 打卡网站逻辑
-   技术栈：原生 JS（无依赖）· 数据持久化：localStorage
+    injectNav("index");
 
-   代码结构：
-   ① 任务配置        ② 存储层        ③ 日期工具
-   ④ 状态计算        ⑤ 页面渲染      ⑥ 事件绑定
-   ============================================================ */
+    /* 轮播 */
+    const slides = document.querySelectorAll(".banner-slide");
+    const dotsBox = document.getElementById("bannerDots");
+    let idx = 0;
+    slides.forEach((_, i) => {
+      const d = document.createElement("div");
+      d.className = "banner-dot" + (i === 0 ? " on" : "");
+      dotsBox.appendChild(d);
+    });
+    setInterval(() => {
+      idx = (idx + 1) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle("on", i === idx));
+      dotsBox.querySelectorAll(".banner-dot").forEach((d, i) => d.classList.toggle("on", i === idx));
+    }, 3500);
 
-/* ---------- ① 任务配置 ----------
-   每个任务：id / 图标 / 名称 / 说明 / 时间段标签
-   acid 任务带 onlyOn 字段，只在刷酸日（周二 / 周五）出现 */
-const TASKS = [
-  { id: "sunscreen", icon: "☀️", name: "涂防晒出门",     desc: "一整根手指的量，阴天也要涂", time: "早上" },
-  { id: "moisture",  icon: "🧴", name: "保湿（大宝）",   desc: "早上晚上各一次，脸颊多按几下", time: "早晚" },
-  { id: "resun",     icon: "🔁", name: "补涂防晒",       desc: "午休后补一次，体育课后必须补", time: "中午" },
-  { id: "cleanse",   icon: "🧼", name: "认真洗脸卸防晒", desc: "欧敏肤 + 起泡网，T 区洗两遍", time: "晚上" },
-  { id: "sleep",     icon: "😴", name: "23:00 前睡觉",   desc: "熬夜的暗沉，精华救不回来", time: "睡前" },
-  { id: "nosugar",   icon: "🚫", name: "今天没喝奶茶没吃甜的", desc: "糖化反应 = 皮肤发黄元凶", time: "全天" },
-  { id: "acid",      icon: "💧", name: "刷酸（水杨酸棉片）", desc: "湿敷 5 分钟洗掉，今晚不用烟酰胺", time: "晚上", onlyOn: acidDay },
-];
-
-/* 打卡成功后随机弹出的鼓励语 */
-const CHEERS = [
-  "皮肤在偷偷变好 ✨",
-  "自律的男人最帅 😎",
-  "韩男进度 +1%",
-  "坚持就是水光肌 💧",
-  "黑色素退退退！",
-  "今天也是精致男孩 🧴",
-];
-
-/* 完美日（100% 完成）的专属提示 */
-const PERFECT_CHEER = "完美打卡日达成！连续 {n} 天 🔥";
-
-/* ---------- ② 存储层 ----------
-   两类数据：
-   - sc_meta              → { startDate: "YYYY-MM-DD" } 计划开始日期
-   - sc_2026-08-21 这种    → { tasks: {任务id: true}, skin: 0~5 } 每日记录 */
-const LS_META = "sc_meta";
-
-function loadMeta() {
-  try {
-    return JSON.parse(localStorage.getItem(LS_META)) || {};
-  } catch {
-    return {}; // 数据损坏时静默降级，不让页面崩掉
-  }
-}
-function saveMeta(meta) {
-  localStorage.setItem(LS_META, JSON.stringify(meta));
-}
-function loadDay(dateStr) {
-  try {
-    return JSON.parse(localStorage.getItem("sc_" + dateStr)) || { tasks: {}, skin: 0 };
-  } catch {
-    return { tasks: {}, skin: 0 };
-  }
-}
-function saveDay(dateStr, data) {
-  localStorage.setItem("sc_" + dateStr, JSON.stringify(data));
-}
-
-/* ---------- ③ 日期工具 ---------- */
-
-/** 把 Date 格式化为 "YYYY-MM-DD"（本地时区） */
-function fmtDate(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-/** 今天的 "YYYY-MM-DD" */
-function todayStr() {
-  return fmtDate(new Date());
-}
-
-/** 判断某日期是否刷酸日：周二(2) / 周五(5) */
-function acidDay(dateStr) {
-  const d = new Date(dateStr + "T12:00:00"); // 取中午避免时区边界问题
-  const day = d.getDay();
-  return day === 2 || day === 5;
-}
-
-/** 计划进行到第几天（Day 1 = 开始当天），超过 30 封顶显示 */
-function dayNumber(startDate) {
-  const start = new Date(startDate + "T00:00:00");
-  const now = new Date(todayStr() + "T00:00:00");
-  const diff = Math.floor((now - start) / 86400000); // 毫秒 → 天
-  return diff + 1;
-}
-
-/* ---------- ④ 状态计算 ---------- */
-
-/** 某天「应该完成的任务列表」（刷酸日会多一项 acid） */
-function tasksFor(dateStr) {
-  return TASKS.filter((t) => !t.onlyOn || t.onlyOn(dateStr));
-}
-
-/** 某天的完成率 0~1 */
-function progressOf(dateStr, dayData) {
-  const list = tasksFor(dateStr);
-  const done = list.filter((t) => dayData.tasks[t.id]).length;
-  return list.length ? done / list.length : 0;
-}
-
-/** 完成率 ≥ 80% 记为「完美日」 */
-function isPerfect(dateStr, dayData) {
-  return progressOf(dateStr, dayData) >= 0.8;
-}
-
-/** 连续完美日天数：从今天往回数，遇到第一个非完美日停止 */
-function calcStreak() {
-  let streak = 0;
-  const cur = new Date(todayStr() + "T00:00:00");
-
-  // 今天若已达标先计入（还没达标也不算断，给今天留机会）
-  const todayData = loadDay(todayStr());
-  if (isPerfect(todayStr(), todayData)) streak++;
-
-  // 从昨天往回逐天检查
-  for (let i = 1; i <= 365; i++) {
-    const d = new Date(cur);
-    d.setDate(d.getDate() - i);
-    const ds = fmtDate(d);
-    const data = loadDay(ds);
-    if (data.tasks && Object.keys(data.tasks).length && isPerfect(ds, data)) {
-      streak++;
-    } else {
-      break;
-    }
-  }
-  return streak;
-}
-
-/** 全部历史统计：完美日总数 + 平均完成率 */
-function calcStats() {
-  let perfect = 0;
-  let sum = 0;
-  let count = 0;
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (!key.startsWith("sc_") || key === LS_META) continue;
-    const dateStr = key.slice(3);
-    const data = loadDay(dateStr);
-    if (!data.tasks || !Object.keys(data.tasks).length) continue; // 没打卡的空记录跳过
-    sum += progressOf(dateStr, data);
-    count++;
-    if (isPerfect(dateStr, data)) perfect++;
-  }
-  return { perfect, avgRate: count ? sum / count : null };
-}
-
-/* ---------- ⑤ 页面渲染 ---------- */
-
-const $ = (id) => document.getElementById(id);
-
-function renderAll() {
-  const meta = loadMeta();
-  const today = todayStr();
-  const dayData = loadDay(today);
-
-  // 顶部日期行
-  const week = ["日", "一", "二", "三", "四", "五", "六"];
-  const d = new Date(today + "T12:00:00");
-  $("todayLine").textContent =
-    `${d.getMonth() + 1} 月 ${d.getDate()} 日 · 星期${week[d.getDay()]}` +
-    (acidDay(today) ? " · 💧 今天是刷酸日" : "");
-
-  // 30 天进度
-  const dayNum = Math.min(Math.max(dayNumber(meta.startDate), 1), 30);
-  $("dayBadge").textContent = "Day " + dayNum;
-  $("progressFill").style.width = (dayNum / 30) * 100 + "%";
-  $("progressText").textContent = dayNum >= 30
-    ? "🎉 满月达成！该去晒对比照了"
-    : `已完成 ${dayNum} 天，还剩 ${30 - dayNum} 天`;
-  $("medal7").classList.toggle("unlocked", dayNum >= 7);
-  $("medal14").classList.toggle("unlocked", dayNum >= 14);
-  $("medal30").classList.toggle("unlocked", dayNum >= 30);
-
-  // 今日任务列表
-  const list = tasksFor(today);
-  const doneCount = list.filter((t) => dayData.tasks[t.id]).length;
-  $("doneCount").textContent = `${doneCount} / ${list.length}`;
-  $("taskList").innerHTML = list
-    .map(
-      (t) => `
-      <li class="task-item ${dayData.tasks[t.id] ? "checked" : ""}" data-id="${t.id}">
-        <div class="task-check"></div>
-        <span class="task-icon">${t.icon}</span>
-        <div class="task-body">
-          <div class="task-name">${t.name}</div>
-          <div class="task-desc">${t.desc}</div>
-        </div>
-        <span class="task-time">${t.time}</span>
-      </li>`
-    )
-    .join("");
-
-  // 刷酸提示行
-  $("acidTip").textContent = acidDay(today)
-    ? "💧 今天是刷酸日：刷酸当晚跳过烟酰胺（现在还没买，正好）"
-    : "今天不刷酸，每周二 / 周五才是刷酸日";
-
-  // 皮肤状态星星
-  renderStars(dayData.skin);
-
-  // 统计
-  const streak = calcStreak();
-  const stats = calcStats();
-  $("streakNum").textContent = streak;
-  $("perfectNum").textContent = stats.perfect;
-  $("rateNum").textContent = stats.avgRate === null ? "—" : Math.round(stats.avgRate * 100) + "%";
-
-  renderWeek();
-}
-
-/** 皮肤状态五星（点第 n 颗 = n 分；再点当前分同一颗 = 清零） */
-function renderStars(value) {
-  $("stars").innerHTML = [1, 2, 3, 4, 5]
-    .map(
-      (n) =>
-        `<span class="star ${n <= value ? "on" : ""}" data-value="${n}">⭐</span>`
-    )
-    .join("");
-}
-
-/** 最近 7 天热力格：颜色分档 = 完美 / 达标 / 部分 / 无记录 */
-function renderWeek() {
-  const cells = [];
-  const base = new Date(todayStr() + "T00:00:00");
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(base);
-    d.setDate(d.getDate() - i);
-    const ds = fmtDate(d);
-    const data = loadDay(ds);
-    const hasRecord = data.tasks && Object.keys(data.tasks).length;
-    const p = hasRecord ? progressOf(ds, data) : 0;
-    let lv = "";
-    if (hasRecord) {
-      if (p >= 0.999) lv = "lv-perfect";
-      else if (p >= 0.8) lv = "lv-good";
-      else lv = "lv-partial";
-    }
-    const isToday = ds === todayStr();
-    const week = ["日", "一", "二", "三", "四", "五", "六"];
-    cells.push(`
-      <div class="week-cell ${lv} ${isToday ? "today" : ""}">
-        <span>${isToday ? "今" : week[d.getDay()]}</span>
-        <span class="pct">${hasRecord ? Math.round(p * 100) + "%" : "·"}</span>
-      </div>`);
-  }
-  $("weekGrid").innerHTML = cells.join("");
-}
-
-/* ---------- ⑥ 事件绑定 ---------- */
-
-/** Toast：弹出一句提示，2 秒后消失 */
-let toastTimer;
-function toast(msg) {
-  const el = $("toast");
-  el.textContent = msg;
-  el.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove("show"), 2000);
-}
-
-/* 点击任务 → 切换勾选状态 */
-$("taskList").addEventListener("click", (e) => {
-  const item = e.target.closest(".task-item");
-  if (!item) return;
-
-  const today = todayStr();
-  const data = loadDay(today);
-  const id = item.dataset.id;
-  const now = new Date();
-  const hour = now.getHours();
-
-  // —— 时间彩蛋：防止"提前打明天的卡" ——
-  if (id === "sleep" && hour < 20 && !data.tasks[id]) {
-    toast("这么早就睡？勾之前问问自己 😏");
-  }
-  if (id === "sunscreen" && hour >= 19 && !data.tasks[id]) {
-    toast("这个点才涂防晒，防的是月亮吗 🌙");
-  }
-
-  data.tasks[id] = !data.tasks[id]; // 取反 = 勾选/取消
-  saveDay(today, data);
-  renderAll();
-
-  // 刚勾上（不是取消）时给鼓励
-  if (data.tasks[id]) {
+    /* 填充 Banner 数据 */
+    const today = todayStr();
+    const dayData = loadDay(today);
     const list = tasksFor(today);
-    const done = list.filter((t) => data.tasks[t.id]).length;
-    if (done === list.length) {
-      // 全部完成 → 完美日专属文案
-      toast(PERFECT_CHEER.replace("{n}", calcStreak()));
-    } else {
-      toast(CHEERS[Math.floor(Math.random() * CHEERS.length)]);
-    }
-  }
-});
+    const done = list.filter((t) => dayData.tasks[t.id]).length;
+    document.getElementById("bannerProgress").textContent =
+      `已完成 ${done} / ${list.length} 项，继续加油！`;
+    const meta = loadMeta();
+    const dayNum = Math.floor((new Date(today) - new Date(meta.startDate)) / 86400000) + 1;
+    document.getElementById("bannerTip").textContent =
+      TIPS[((dayNum - 1) % TIPS.length + TIPS.length) % TIPS.length];
 
-/* 点击星星 → 记录皮肤状态 */
-$("stars").addEventListener("click", (e) => {
-  const star = e.target.closest(".star");
-  if (!star) return;
-  const value = Number(star.dataset.value);
-  const today = todayStr();
-  const data = loadDay(today);
-  data.skin = data.skin === value ? 0 : value; // 点同一颗 = 取消
-  saveDay(today, data);
-  renderStars(data.skin);
-  if (value) toast(`今日皮肤 ${value} 星，记录上了 📝`);
-});
+    /* 今日待办速览 */
+    document.getElementById("todoList").innerHTML = list
+      .map((t) => `<li style="padding:7px 0;border-bottom:1px solid var(--border);font-size:13.5px;display:flex;justify-content:space-between;">
+        <span>${t.icon} ${t.name}</span>
+        <span style="color:${dayData.tasks[t.id] ? "var(--green)" : "var(--text-light)"}">${dayData.tasks[t.id] ? "✓" : "○"}</span>
+      </li>`).join("");
 
-/* 设置弹窗：打开 / 关闭 / 保存 / 清空 */
-const modal = $("modalMask");
-
-$("settingsBtn").addEventListener("click", () => {
-  $("startDateInput").value = loadMeta().startDate || todayStr();
-  modal.classList.add("open");
-});
-$("closeBtn").addEventListener("click", () => modal.classList.remove("open"));
-modal.addEventListener("click", (e) => {
-  if (e.target === modal) modal.classList.remove("open"); // 点遮罩也能关
-});
-
-$("saveBtn").addEventListener("click", () => {
-  const v = $("startDateInput").value;
-  if (!v) return toast("先选个日期");
-  saveMeta({ startDate: v });
-  modal.classList.remove("open");
-  renderAll();
-  toast("开始日期已保存 ✅");
-});
-
-$("clearBtn").addEventListener("click", () => {
-  if (!confirm("确定清空所有打卡记录？此操作不可恢复！")) return;
-  if (!confirm("再问一遍：真的全删吗？")) return;
-  Object.keys(localStorage)
-    .filter((k) => k.startsWith("sc_"))
-    .forEach((k) => localStorage.removeItem(k));
-  renderAll();
-  modal.classList.remove("open");
-  toast("已清空，从零开始");
-});
-
-/* ---------- 启动 ---------- */
-(function init() {
-  // 首次使用：默认开始日期 = 今天
-  const meta = loadMeta();
-  if (!meta.startDate) {
-    saveMeta({ startDate: todayStr() });
-  }
-  renderAll();
-})();
-
-</script>
+    /* 等级速览 */
+    const h = enrichHistory(calcHistory());
+    const lv = levelOf(h.xp);
+    document.getElementById("levelSummary").innerHTML = `
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;">Lv ${lv}</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;">${LEVEL_TITLES[lv - 1]}</div>
+          <div class="muted">${h.xp} XP · 完美日 ${h.perfect} · 连续 ${calcStreak()} 天</div>
+          ${h.checked === 0 ? '<div class="muted" style="color:var(--amber);margin-top:2px;">还没有记录，去打卡页勾下今天的第一项吧 →</div>' : ""}
+        </div>
+      </div>`;
+  </script>
 </body>
 </html>

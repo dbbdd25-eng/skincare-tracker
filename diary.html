@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>皮肤日记 · 韩男养成中心</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82c4">
+</head>
+<body>
+  <main class="container">
+
+    <div class="card form">
+      <div class="card-head"><h2>📝 写今天的皮肤日记</h2></div>
+      <textarea id="diaryText" placeholder="今天皮肤怎么样？出油多吗？有熬夜吗？用了什么产品？"></textarea>
+      <div class="stars" id="stars" style="margin:10px 0;"></div>
+      <button class="btn btn-block" id="saveDiary">保存日记</button>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>📚 历史记录</h2><span class="muted" id="diaryCount"></span></div>
+      <ul class="timeline" id="timeline"></ul>
+    </div>
+
+  </main>
+
+  <script src="common.js"></script>
+  <script>
+    injectNav("diary");
+    const $ = (id) => document.getElementById(id);
+    const LS_DIARY = "scdiary_";
+
+    /* 读取某天日记 */
+    function loadDiary(dateStr) {
+      try { return JSON.parse(localStorage.getItem(LS_DIARY + dateStr)) || { text: "", skin: 0 }; }
+      catch { return { text: "", skin: 0 }; }
+    }
+
+    /* 星星评分 */
+    let skinVal = 0;
+    function renderStars() {
+      $("#stars").innerHTML = [1,2,3,4,5].map((n) =>
+        `<span class="star ${n <= skinVal ? "on" : ""}" data-value="${n}">⭐</span>`).join("");
+    }
+    $("#stars").addEventListener("click", (e) => {
+      const s = e.target.closest(".star"); if (!s) return;
+      skinVal = skinVal === Number(s.dataset.value) ? 0 : Number(s.dataset.value);
+      renderStars();
+    });
+
+    /* 时间线渲染 */
+    function renderTimeline() {
+      const keys = Object.keys(localStorage).filter((k) => k.startsWith(LS_DIARY));
+      keys.sort().reverse();
+      $("#diaryCount").textContent = `共 ${keys.length} 条`;
+      $("#timeline").innerHTML = keys.length
+        ? keys.map((k) => {
+            const d = loadDiary(k.slice(LS_DIARY.length));
+            return `<li class="tl-item">
+              <div class="tl-date">${k.slice(LS_DIARY.length)}</div>
+              ${d.text ? `<div class="tl-text">${escapeHtml(d.text)}</div>` : ""}
+              ${d.skin ? `<div class="tl-skin">${"⭐".repeat(d.skin)}</div>` : ""}
+            </li>`;
+          }).join("")
+        : `<li class="tl-item"><div class="tl-text muted">还没有日记，写下第一条吧</div></li>`;
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
+    }
+
+    $("#saveDiary").addEventListener("click", () => {
+      const text = $("#diaryText").value.trim();
+      if (!text && !skinVal) return showToast("写点内容或打个分再保存呀");
+      const today = todayStr();
+      const old = loadDiary(today);
+      localStorage.setItem(LS_DIARY + today, JSON.stringify({ text: text || old.text, skin: skinVal || old.skin }));
+      // 同时把皮肤评分同步到打卡数据（保持两处一致）
+      const dayData = loadDay(today);
+      if (skinVal) { dayData.skin = skinVal; saveDay(today, dayData); }
+      $("#diaryText").value = "";
+      skinVal = 0;
+      renderStars();
+      renderTimeline();
+      // 保存后自动滚到下方时间线，让你看到刚写的日记
+      $("#timeline").scrollIntoView({ behavior: "smooth", block: "start" });
+      showToast("已保存 ✅ 看下方时间线，第一条就是你");
+    });
+
+    renderStars();
+    renderTimeline();
+  </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>励志金句 · 韩男养成中心</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3b82c4">
+</head>
+<body>
+  <main class="container">
+
+    <div class="card" style="text-align:center;padding:28px 20px;">
+      <div class="card-head" style="justify-content:center;"><h2>✨ 今日金句</h2></div>
+      <div class="quote-card" id="quoteCard" style="margin:0;">
+        <div class="q-text" id="qText"></div>
+        <div class="q-from" id="qFrom"></div>
+      </div>
+      <button class="btn" id="nextBtn" style="margin-top:18px;">换一句 →</button>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>📖 金句墙</h2><span class="muted" id="quoteCount"></span></div>
+      <div id="quoteList"></div>
+    </div>
+
+  </main>
+
+  <script src="common.js"></script>
+  <script>
+    injectNav("quotes");
+    const $ = (id) => document.getElementById(id);
+
+    /* 励志金句库（护肤 + 自律 + 成长主题） */
+    const QUOTES = [
+      { text: "自律不是苦行，是把更好的自己当成习惯。", from: "韩男养成手册" },
+      { text: "你涂的每一层防晒，都是未来脸上的底气。", from: "护肤真言" },
+      { text: "熬夜偷走的不只是睡眠，还有皮肤的光。", from: "皮肤科医生" },
+      { text: "变好看不是讨好别人，是取悦镜子里的自己。", from: "匿名" },
+      { text: "坚持 30 天，让改变发生。", from: "养成计划" },
+      { text: "奶茶的甜是一时的，好皮肤的好看是一辈子的。", from: "戒糖党" },
+      { text: "真正的精致，藏在别人看不见的日常里。", from: "生活美学" },
+      { text: "你不需要和谁比，只需要比昨天的自己好一点。", from: "成长语录" },
+      { text: "皮肤是生活状态的名片。", from: "护肤逻辑" },
+      { text: "早睡的人，已经在偷偷变帅了。", from: "夜猫子悔过书" },
+      { text: "第一印象从脸开始，但气质从自律开始。", from: "形象管理" },
+      { text: "把一件事坚持 100 天，它会变成你的一部分。", from: "习惯的力量" },
+    ];
+
+    let current = 0;
+    function renderQuote() {
+      const q = QUOTES[current];
+      $("#qText").textContent = q.text;
+      $("#qFrom").textContent = "—— " + q.from;
+    }
+    $("#nextBtn").addEventListener("click", () => {
+      current = (current + 1) % QUOTES.length;
+      renderQuote();
+    });
+
+    $("#quoteCount").textContent = `共 ${QUOTES.length} 句`;
+    $("#quoteList").innerHTML = QUOTES.map((q) => `
+      <div class="wiki-item">
+        <div class="w-name">“${q.text}”</div>
+        <div class="w-desc">—— ${q.from}</div>
+      </div>`).join("");
+
+    renderQuote();
+  </script>
+</body>
+</html>
